@@ -1,10 +1,13 @@
 package service
 
-import "chess/model"
+import (
+	"chess/cons"
+	"chess/model"
+)
 
 // PawnRules 兵
 func PawnRules(row, column int, role model.Roles, board *model.ChessBoard) (paths [][]int) {
-	if role == A {
+	if role == cons.A {
 		if row == 1 {
 			paths = append(paths, []int{row + 2, column})
 		}
@@ -68,30 +71,30 @@ func RookRules(row, column int, role model.Roles, board *model.ChessBoard) (path
 	right := []int{row, j}
 
 	// 非空位置
-	if role == A {
-		if board[top[0]][top[1]].Owner.Role != A {
+	if role == cons.A {
+		if board[top[0]][top[1]].Owner.Role != cons.A {
 			paths = append(paths, top)
 		}
-		if board[button[0]][button[1]].Owner.Role != A {
+		if board[button[0]][button[1]].Owner.Role != cons.A {
 			paths = append(paths, button)
 		}
-		if board[left[0]][left[1]].Owner.Role != A {
+		if board[left[0]][left[1]].Owner.Role != cons.A {
 			paths = append(paths, left)
 		}
-		if board[right[0]][right[1]].Owner.Role != A {
+		if board[right[0]][right[1]].Owner.Role != cons.A {
 			paths = append(paths, right)
 		}
 	} else {
-		if board[top[0]][top[1]].Owner.Role != B {
+		if board[top[0]][top[1]].Owner.Role != cons.B {
 			paths = append(paths, top)
 		}
-		if board[button[0]][button[1]].Owner.Role != B {
+		if board[button[0]][button[1]].Owner.Role != cons.B {
 			paths = append(paths, button)
 		}
-		if board[left[0]][left[1]].Owner.Role != B {
+		if board[left[0]][left[1]].Owner.Role != cons.B {
 			paths = append(paths, left)
 		}
-		if board[right[0]][right[1]].Owner.Role != B {
+		if board[right[0]][right[1]].Owner.Role != cons.B {
 			paths = append(paths, right)
 		}
 	}
@@ -128,30 +131,30 @@ func BishopRules(row, column int, role model.Roles, board *model.ChessBoard) (pa
 	lb := []int{i, j}
 
 	// 非空位置
-	if role == A {
-		if board[rt[0]][rt[1]].Owner.Role != A {
+	if role == cons.A {
+		if board[rt[0]][rt[1]].Owner.Role != cons.A {
 			paths = append(paths, rt)
 		}
-		if board[rb[0]][rb[1]].Owner.Role != A {
+		if board[rb[0]][rb[1]].Owner.Role != cons.A {
 			paths = append(paths, rb)
 		}
-		if board[lt[0]][lt[1]].Owner.Role != A {
+		if board[lt[0]][lt[1]].Owner.Role != cons.A {
 			paths = append(paths, lt)
 		}
-		if board[lb[0]][lb[1]].Owner.Role != A {
+		if board[lb[0]][lb[1]].Owner.Role != cons.A {
 			paths = append(paths, lb)
 		}
 	} else {
-		if board[rt[0]][rt[1]].Owner.Role != B {
+		if board[rt[0]][rt[1]].Owner.Role != cons.B {
 			paths = append(paths, rt)
 		}
-		if board[rb[0]][rb[1]].Owner.Role != B {
+		if board[rb[0]][rb[1]].Owner.Role != cons.B {
 			paths = append(paths, rb)
 		}
-		if board[lt[0]][lt[1]].Owner.Role != B {
+		if board[lt[0]][lt[1]].Owner.Role != cons.B {
 			paths = append(paths, lt)
 		}
-		if board[lb[0]][lb[1]].Owner.Role != B {
+		if board[lb[0]][lb[1]].Owner.Role != cons.B {
 			paths = append(paths, lb)
 		}
 	}
@@ -161,9 +164,9 @@ func BishopRules(row, column int, role model.Roles, board *model.ChessBoard) (pa
 
 // KingRules 王
 func KingRules(row, column int, role model.Roles, board *model.ChessBoard) (paths [][]int) {
-	var fight model.Roles = A
-	if role == A {
-		fight = B
+	var fight model.Roles = cons.A
+	if role == cons.A {
+		fight = cons.B
 	}
 
 	// 上
@@ -227,9 +230,9 @@ func KingRules(row, column int, role model.Roles, board *model.ChessBoard) (path
 
 // QueenRules 后
 func QueenRules(row, column int, role model.Roles, board *model.ChessBoard) (paths [][]int) {
-	var fight model.Roles = A
-	if role == A {
-		fight = B
+	var fight model.Roles = cons.A
+	if role == cons.A {
+		fight = cons.B
 	}
 
 	i, j := 0, 0

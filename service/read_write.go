@@ -3,28 +3,12 @@ package service
 import (
 	"chess/model"
 	"github.com/gorilla/websocket"
-	"sync"
 )
 
-var (
-	Lock   sync.Mutex
-	RoomId = 0
-)
-
-const (
-	King   = 1
-	Queen  = 2
-	Bishop = 3
-	Rook   = 4
-	Knight = 5
-	Pawn   = 6
-)
-
-// Read 读出用户的命令，交给Hub处理
 func Read(cli *model.Client) {
 	conn := cli.Conn
 	defer func() {
-
+		conn.Close()
 	}()
 
 	for {
@@ -37,17 +21,8 @@ func Read(cli *model.Client) {
 			Data: data,
 			Cli:  cli,
 		}
-		switch cli.Status {
-		// 大厅
-		case 0:
-			HubListener.Srv <- msg
-		// 房间
-		case 1:
-		// 游戏中
-		case 2:
 
-		}
-
+		Hub.Ch <- msg
 	}
 }
 
@@ -58,10 +33,12 @@ func Write(cli *model.Client) {
 	}()
 
 	for {
-		msg := <-cli.Receive
-		err := conn.WriteMessage(websocket.TextMessage, msg)
-		if err != nil {
-			panic(err)
+		select {
+		case msg := <-cli.Receive:
+			err := conn.WriteMessage(websocket.TextMessage, msg)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }
