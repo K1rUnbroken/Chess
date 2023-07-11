@@ -14,7 +14,7 @@ func Read(cli *model.Client) {
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
-			panic(err)
+			break
 		}
 
 		msg := &model.Message{
@@ -29,7 +29,7 @@ func Read(cli *model.Client) {
 func Write(cli *model.Client) {
 	conn := cli.Conn
 	defer func() {
-
+		conn.Close()
 	}()
 
 	for {
@@ -37,17 +37,8 @@ func Write(cli *model.Client) {
 		case msg := <-cli.Receive:
 			err := conn.WriteMessage(websocket.TextMessage, msg)
 			if err != nil {
-				panic(err)
+				break
 			}
 		}
 	}
 }
-
-// Listener 监听用户的基础命令
-/*
-	READY  			准备
- 	FINDROOM		查找所有可以加入的房间
- 	QUIT  			退出大厅（断开连接）
- 	ADDROOM XX		加入房间XX
- 	CREATROOM		创建房间
-*/

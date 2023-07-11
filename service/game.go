@@ -9,45 +9,35 @@ import (
 )
 
 // InitGame 初始化游戏资源
-func InitGame(roomId model.RoomId) *model.Game {
-	// 创建游戏对局内的Client对象
-	gameClients := []*model.GameClient{
-		// A方
-		{
-			Conn:     Hub.Rooms[roomId].Clients[0].Conn,
-			Username: Hub.Rooms[roomId].Clients[0].Username,
-			Receive:  Hub.Rooms[roomId].Clients[0].Receive,
-			Role:     cons.A,
-		},
-		// B方
-		{
-			Conn:     Hub.Rooms[roomId].Clients[1].Conn,
-			Username: Hub.Rooms[roomId].Clients[1].Username,
-			Receive:  Hub.Rooms[roomId].Clients[1].Receive,
-			Role:     cons.B,
-		},
+func InitGame(clients []*model.Client) *model.Game {
+	clients[0].GameInfo = &model.GameInfo{
+		Role: cons.A,
 	}
+	clients[1].GameInfo = &model.GameInfo{
+		Role: cons.B,
+	}
+
 	// 初始化棋盘
-	board := InitChessBoard(gameClients)
+	board := InitChessBoard(clients)
 
 	game := &model.Game{
 		Id:         model.GameId(time.Now().Unix()),
 		Turn:       cons.A,
-		Clients:    gameClients,
-		Ch:         make(chan *model.GameMessage, 20),
+		Clients:    clients,
+		Ch:         make(chan *model.Message, 20),
 		Selected:   nil,
 		ValidPaths: make([][]int, 0),
 		Board:      board,
 	}
 
-	game.Clients[0].GameId = game.Id
-	game.Clients[1].GameId = game.Id
+	clients[0].GameInfo.GameId = game.Id
+	clients[1].GameInfo.GameId = game.Id
 
 	return game
 }
 
 // InitChessBoard 初始化棋盘
-func InitChessBoard(clients []*model.GameClient) *model.ChessBoard {
+func InitChessBoard(clients []*model.Client) *model.ChessBoard {
 	board := new(model.ChessBoard)
 
 	// 除了Pawn之外的其他棋子
@@ -120,26 +110,14 @@ func GetChessPieceObj(x, y string, board *model.ChessBoard) *model.ChessPieceObj
 		return nil
 	}
 
-	for _, value := range board {
-		for _, value2 := range value {
-			if value2.Location.X == xx && value2.Location.Y == yy {
-				return value2
-			}
-		}
-	}
-
-	return nil
+	return board[xx][yy]
 }
 
-// CheckLocationValid 检查要移动到的位置是否在可以移动的路径范围内
-func CheckLocationValid(destObj *model.ChessPieceObj, validPaths [][]int) bool {
-	if destObj == nil {
-		return false
-	}
-
-	i, j := destObj.Location.X, destObj.Location.Y
+// CheckLocationValid 检查要移动到的位置是否在给出的可以到达的路径范围内
+func CheckLocationValid(destLoc []int, validPaths [][]int) bool {
+	x, y := destLoc[0], destLoc[1]
 	for _, value := range validPaths {
-		if value[0] == i && value[1] == j {
+		if value[0] == x && value[1] == y {
 			return true
 		}
 	}
@@ -152,76 +130,83 @@ func GetAllPaths(obj *model.ChessPieceObj, board *model.ChessBoard) (paths [][]i
 	row, column := obj.Location.X, obj.Location.Y
 	switch obj.Type {
 	case cons.Pawn:
-		paths = PawnRules(row, column, obj.Owner.Role, board)
+		paths = PawnRules(row, column, obj.Owner.GameInfo.Role, board)
 	case cons.Rook:
-		paths = RookRules(row, column, obj.Owner.Role, board)
+		paths = RookRules(row, column, obj.Owner.GameInfo.Role, board)
 	case cons.Bishop:
-		paths = BishopRules(row, column, obj.Owner.Role, board)
+		paths = BishopRules(row, column, obj.Owner.GameInfo.Role, board)
 	case cons.King:
-		paths = KingRules(row, column, obj.Owner.Role, board)
+		paths = KingRules(row, column, obj.Owner.GameInfo.Role, board)
 	case cons.Queen:
-		paths = QueenRules(row, column, obj.Owner.Role, board)
+		paths = QueenRules(row, column, obj.Owner.GameInfo.Role, board)
+	case cons.Knight:
+		paths = KnightRules(row, column, obj.Owner.GameInfo.Role, board)
 	}
 
 	return paths
 }
 
-func UpdateChessBoard(src, dst *model.ChessPieceObj, board *model.ChessBoard) {
+func UpdateChessBoard(src *model.ChessPieceObj, destLoc []int, board *model.ChessBoard) {
+	board[destLoc[0]][destLoc[1]] = src
 	board[src.Location.X][src.Location.Y] = nil
-	board[dst.Location.X][dst.Location.Y] = dst
+	src.Location.X, src.Location.Y = destLoc[0], destLoc[1]
 }
 
-func PrintChessBoard(role model.Roles, board *model.ChessBoard) string {
+func PrintChessBoard(cli *model.Client, board *model.ChessBoard) string {
 	// 一个格子宽2，高1
 	width := 2
 	// 空格
-	space := " "
+	space := ""
 	for i := 0; i < width; i++ {
-		space += "&nbsp"
+		space += " "
 	}
 	// 换行
 	newLine := "\n"
 
-	//str := "&nbsp"
-	//for i := 0; i < cons.ChessBoardColNum; i++ {
-	//	str += fmt.Sprintf("%02d", i)
-	//}
-	str := "|"
-	for i := 0; i < width*cons.ChessBoardColNum; i++ {
-		str += "-"
+	// 顶部的行号
+	str := fmt.Sprintf("%2s", " ")
+	for i := 0; i < cons.ChessBoardColNum; i++ {
+		str += fmt.Sprintf("%2d", i)
 	}
-	str += "|" + newLine + "|"
+	str += newLine
 
-	if role == cons.A {
-		for i := 7; i >= 0; i-- {
-			for j := 0; j < 8; j++ {
-				if board[i][j] != nil {
-					value := board[i][j].Type
-					str += fmt.Sprintf("%s", value)
-				} else {
-					str += space
-				}
-			}
-			str += "|" + newLine + "|"
-		}
-	} else {
-		for i := 0; i < 8; i++ {
-			for j := 0; j < 8; j++ {
-				if board[i][j] != nil {
-					value := board[i][j].Type
-					str += fmt.Sprintf("%s", value)
-				} else {
-					str += space
-				}
-			}
-			str += "|" + newLine + "|"
-		}
-	}
-
+	// 上边框
+	str += " A|"
 	for i := 0; i < width*cons.ChessBoardColNum; i++ {
 		str += "-"
 	}
 	str += "|" + newLine
+
+	// 左侧的列号+左边框+棋子+右边框
+	for i := 0; i < 8; i++ {
+		str += fmt.Sprintf("%2d", i) + "|"
+		for j := 0; j < 8; j++ {
+			if board[i][j] != nil {
+				value := board[i][j].Type
+				str += fmt.Sprintf("%s", value)
+			} else {
+				str += space
+			}
+		}
+		str += "|" + newLine
+	}
+
+	// 底部的边框
+	str += " B|"
+	for i := 0; i < width*cons.ChessBoardColNum; i++ {
+		str += "-"
+	}
+	str += "|" + newLine
+
+	// 提示
+	info := ""
+	game := Hub.Games[cli.GameInfo.GameId]
+	if cli.GameInfo.Role == game.Turn {
+		info = "现在是您的回合..."
+	} else {
+		info = "现在是对方的回合..."
+	}
+	str += info + "\n"
 
 	return str
 }

@@ -18,6 +18,7 @@ import (
 */
 type Hub struct {
 	Rooms map[RoomId]*Room
+	Games map[GameId]*Game
 	Ch    chan *Message
 }
 
@@ -50,11 +51,7 @@ type Client struct {
 	Receive  chan []byte
 	RoomId   RoomId
 	Status   ClientStatus
-}
-
-type GameHub struct {
-	Games map[GameId]*Game
-	Ch    chan *GameMessage
+	GameInfo *GameInfo
 }
 
 // Game
@@ -71,14 +68,14 @@ type GameHub struct {
 type Game struct {
 	Id         GameId
 	Turn       Roles
-	Clients    []*GameClient
-	Ch         chan *GameMessage
+	Clients    []*Client
+	Ch         chan *Message
 	Selected   *ChessPieceObj
 	ValidPaths [][]int
 	Board      *ChessBoard
 }
 
-// GameClient
+// GameInfo
 /*
 	功能：表示游戏内的客户端对象
 	属性：
@@ -87,12 +84,9 @@ type Game struct {
 		Receive		即Client.Receive，与Client.Receive指向的chan是同一个
 		Role		表示该玩家的角色，要么是A方，要么是B方
 */
-type GameClient struct {
-	GameId   GameId
-	Conn     *websocket.Conn
-	Username string
-	Receive  chan []byte
-	Role     Roles
+type GameInfo struct {
+	GameId GameId
+	Role   Roles
 }
 
 // Message
@@ -102,15 +96,6 @@ type GameClient struct {
 type Message struct {
 	Data []byte
 	Cli  *Client
-}
-
-// GameMessage
-/*
-	功能：在游戏中，将用户的消息打包传输给GameHub处理
-*/
-type GameMessage struct {
-	Data []byte
-	Cli  *GameClient
 }
 
 // ChessPieceObj
@@ -124,7 +109,7 @@ type GameMessage struct {
 */
 type ChessPieceObj struct {
 	Type     ChessPieceType
-	Owner    *GameClient
+	Owner    *Client
 	Location struct {
 		X int
 		Y int
@@ -137,10 +122,9 @@ type ChessBoard [8][8]*ChessPieceObj
 type ChessPieceType string
 
 // Roles A方为0，B方为1
-type Roles int
+type Roles string
 
 type ClientStatus int
 
 type RoomId int
 type GameId int
-type Cmd string

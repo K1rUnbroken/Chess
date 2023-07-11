@@ -31,17 +31,12 @@ const (
 
 // 游戏对局中的A方或B方
 const (
-	A = 1
-	B = 2
+	A = "A"
+	B = "B"
 )
 
 // 8x8棋盘
 const (
 	ChessBoardRowNum = 8
 	ChessBoardColNum = 8
-)
-
-const (
-	HallMsg = 1
-	GameMsg = 2
 )

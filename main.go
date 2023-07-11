@@ -10,7 +10,6 @@ func main() {
 	r := gin.Default()
 
 	go service.RunHub()
-	go service.RunGameHub()
 
 	user := r.Group("/user")
 	{

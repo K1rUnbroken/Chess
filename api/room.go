@@ -10,7 +10,6 @@ import (
 
 // Connect 连接大厅
 func Connect(c *gin.Context) {
-	fmt.Println("here")
 	// 协议升级为websocket
 	upgrader := service.GenUpgrader()
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
