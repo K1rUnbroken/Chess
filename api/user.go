@@ -4,6 +4,7 @@ import (
 	"chess/dao"
 	"chess/model"
 	"chess/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -11,6 +12,18 @@ import (
 func Login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
+
+	if username == "" && password == "" {
+		username = c.Query("username")
+		password = c.Query("password")
+	}
+
+	if username == "" && password == "" {
+		v1, _ := c.Get("username")
+		v2, _ := c.Get("password")
+		username = fmt.Sprintf("%s", v1)
+		password = fmt.Sprintf("%s", v2)
+	}
 
 	// 校验账号信息
 	value, ok := dao.UserDB[username]
@@ -46,6 +59,19 @@ func Login(c *gin.Context) {
 func Register(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
+
+	if username == "" && password == "" {
+		username = c.Query("username")
+		password = c.Query("password")
+	}
+
+	if username == "" && password == "" {
+		v1, _ := c.Get("username")
+		v2, _ := c.Get("password")
+		username = fmt.Sprintf("%s", v1)
+		password = fmt.Sprintf("%s", v2)
+	}
+
 	if username == "" || password == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,

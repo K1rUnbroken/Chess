@@ -81,30 +81,34 @@ func RookRules(row, column int, role model.Roles, board *model.ChessBoard) (path
 	i, j := 0, 0
 	// 上
 	for i = row - 1; i >= 0; i-- {
-		if board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, column})
+		if !(board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, column})
 	}
 
 	// 下
 	for i = row + 1; i < cons.ChessBoardRowNum && board[i][column] == nil; i++ {
-		if board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, column})
+		if !(board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, column})
 	}
 
 	// 左
 	for j = column - 1; j >= 0 && board[row][j] == nil; j-- {
-		if board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{row, j})
+		if !(board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{row, j})
 	}
 
 	// 右
 	for j = column + 1; j < cons.ChessBoardColNum && board[row][j] == nil; j++ {
-		if board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{row, j})
+		if !(board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{row, j})
 	}
 
 	return
@@ -120,30 +124,34 @@ func BishopRules(row, column int, role model.Roles, board *model.ChessBoard) (pa
 	i, j := 0, 0
 	// 右上
 	for i, j = row-1, column+1; i >= 0 && j < cons.ChessBoardColNum; i, j = i-1, j+1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	// 右下
 	for i, j = row+1, column+1; i < cons.ChessBoardRowNum && j < cons.ChessBoardColNum; i, j = i+1, j+1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	// 左上
 	for i, j = row-1, column-1; i >= 0 && j >= 0; i, j = i-1, j-1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	// 左下
 	for i, j = row+1, column-1; i < cons.ChessBoardRowNum && j >= 0; i, j = i+1, j-1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	return
@@ -191,58 +199,66 @@ func QueenRules(row, column int, role model.Roles, board *model.ChessBoard) (pat
 	i, j := 0, 0
 	// 上
 	for i = row - 1; i >= 0; i-- {
-		if board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, column})
+		if !(board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, column})
 	}
 
 	// 下
 	for i = row + 1; i < 8; i++ {
-		if board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, column})
+		if !(board[i][column] == nil || board[i][column].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, column})
 	}
 
 	// 左
-	for j = column - 1; i >= 0; j-- {
-		if board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{row, j})
+	for j = column - 1; j >= 0; j-- {
+		if !(board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{row, j})
 	}
 
 	// 右
-	for j = column + 1; i < 8; j++ {
-		if board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{row, j})
+	for j = column + 1; j < 8; j++ {
+		if !(board[row][j] == nil || board[row][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{row, j})
 	}
 
 	// 右上
 	for i, j = row-1, column+1; i >= 0 && j < 8; i, j = i-1, j+1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	// 右下
 	for i, j = row+1, column+1; i < 8 && j < 8; i, j = i+1, j+1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	// 左上
 	for i, j = row-1, column-1; i >= 0 && j >= 0; i, j = i-1, j-1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	// 左下
 	for i, j = row+1, column-1; i < 8 && j >= 0; i, j = i+1, j-1 {
-		if board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight {
-			paths = append(paths, []int{i, j})
+		if !(board[i][j] == nil || board[i][j].Owner.GameInfo.Role == fight) {
+			break
 		}
+		paths = append(paths, []int{i, j})
 	}
 
 	return

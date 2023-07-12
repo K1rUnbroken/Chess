@@ -12,6 +12,11 @@ import (
 
 var (
 	Lock = sync.Mutex{}
+	Hub  = &model.Hub{
+		Rooms: make(map[model.RoomId]*model.Room),
+		Games: make(map[model.GameId]*model.Game),
+		Ch:    make(chan *model.Message, 20),
+	}
 )
 
 // RunHub 管理全局，处理用户的命令
@@ -58,7 +63,7 @@ func RunHub() {
 					roomId, _ := strconv.Atoi(parts[1])
 					room, ok := Hub.Rooms[model.RoomId(roomId)]
 					if !ok {
-						MsgToClient(RoomNotExistsErr(), "", cli)
+						MsgToClient(RoomNotExistsErr, "", cli)
 						continue
 					}
 
@@ -97,7 +102,7 @@ func RunHub() {
 					info := "您创建了房间" + fmt.Sprintf("%d", room.Id)
 					MsgToClient(info, "", cli)
 				default:
-					MsgToClient(HallCmdNotExistsErr(), "", cli)
+					MsgToClient(HallCmdNotExistsErr, "", cli)
 				}
 			//-------------------------------------------Status: InRoom-------------------------------------------------
 			case cons.InRoom:
@@ -172,7 +177,7 @@ func RunHub() {
 						}
 					}
 				default:
-					MsgToClient(RoomCmdNotExistsErr(), "", cli)
+					MsgToClient(RoomCmdNotExistsErr, "", cli)
 				}
 			//----------------------------------------------------Status: InGame----------------------------------------
 			case cons.InGame:
@@ -187,18 +192,18 @@ func RunHub() {
 
 					// 是否是该用户的回合
 					if cli.GameInfo.Role != game.Turn {
-						MsgToClient(NotMyTurnErr(), "", cli)
+						MsgToClient(NotMyTurnErr, "", cli)
 						continue
 					}
 
 					// 找出选中棋子的所有可到达的路径
 					obj := GetChessPieceObj(parts[1], parts[2], game.Board)
 					if obj == nil {
-						MsgToClient(ObjNotExistsErr(), "", cli)
+						MsgToClient(ObjNotExistsErr, "", cli)
 						continue
 					}
 					if obj.Owner != cli {
-						MsgToClient(ObjNotOwn(), "", cli)
+						MsgToClient(ObjNotOwnErr, "", cli)
 						continue
 					}
 					paths := GetAllPaths(obj, game.Board)
@@ -222,7 +227,7 @@ func RunHub() {
 
 					// 必须先选中要操作的棋子
 					if game.Selected == nil {
-						MsgToClient(SelectedFirstErr(), "", cli)
+						MsgToClient(SelectedFirstErr, "", cli)
 						continue
 					}
 
@@ -231,7 +236,7 @@ func RunHub() {
 					y, _ := strconv.Atoi(parts[2])
 					destLoc := []int{x, y}
 					if ok := CheckLocationValid(destLoc, game.ValidPaths); !ok {
-						MsgToClient(UnableMoveToErr(), "", cli)
+						MsgToClient(UnableMoveToErr, "", cli)
 						continue
 					}
 
@@ -267,7 +272,7 @@ func RunHub() {
 					fmt.Println(info1)
 
 				default:
-					MsgToClient(GameCmdNotExistsErr(), "", cli)
+					MsgToClient(GameCmdNotExistsErr, "", cli)
 				}
 			}
 		}

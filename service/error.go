@@ -2,85 +2,57 @@ package service
 
 //----------------------------------------------cmd usage-----------------------
 
-func QuitUsageErr() string {
-	msg := `
+var (
+	QuitUsageErr = `
 Usage:
 	quit
 
 Example: 
-	quit`
-
-	return msg
-}
-
-func FindRoomUsageErr() string {
-	msg := `
+	quit
+`
+	FindRoomUsageErr = `
 Usage:
 	findRoom
 
 Example: 
-	findRoom`
-
-	return msg
-}
-
-func AddRoomUsageErr() string {
-	msg := `
+	findRoom
+`
+	AddRoomUsageErr = `
 Usage:
 	addRoom <RoomId>
 
 Example: 
-	addRoom 123456`
-
-	return msg
-}
-
-func CreateRoomUsageErr() string {
-	msg := `
+	addRoom 123456
+`
+	CreateRoomUsageErr = `
 Usage:
 	createRoom
 
 Example: 
-	createRoom`
-
-	return msg
-}
-
-func ReadyUsageErr() string {
-	msg := `
+	createRoom
+`
+	ReadyUsageErr = `
 Usage:
 	ready
 
 Example: 
-	ready`
-
-	return msg
-}
-
-func SelectUsageErr() string {
-	msg := `
+	ready
+`
+	SelectUsageErr = `
 Usage:
 	select <RowNum> <ColumnNum>
 
 Example: 
-	select 1 0`
-
-	return msg
-}
-
-func MoveUsageErr() string {
-	msg := `
+	select 1 0
+`
+	MoveUsageErr = `
 Usage:
 	move <RowNum> <ColumnNum>
 
 Example: 
-	move 2 0`
-
-	return msg
-}
-
-func HallCmdNotExistsErr() string {
-	msg := `
+	move 2 0
+`
+	HallCmdNotExistsErr = `
 Error:
 	Command not exists.
 
@@ -90,11 +62,7 @@ Supported commands:
 	addRoom <roomId>		加入房间
 	createRoom			创建房间
 `
-	return msg
-}
-
-func RoomCmdNotExistsErr() string {
-	msg := `
+	RoomCmdNotExistsErr = `
 Error:
 	Command not exists.
 
@@ -102,11 +70,7 @@ Supported commands:
 	quit				退出房间
 	ready				准备
 `
-	return msg
-}
-
-func GameCmdNotExistsErr() string {
-	msg := `
+	GameCmdNotExistsErr = `
 Error:
 	Command not exists.
 
@@ -114,33 +78,20 @@ Supported commands:
 	select <RowNum> <ColumnNum>		选择棋子进行操作
 	move <RowNum> <ColumnNum>		移动棋子
 `
-	return msg
-}
+)
 
 //--------------------------------------------room----------------------------------
 
-func RoomNotExistsErr() string {
-	return "Error: Room not exists."
-}
+var (
+	RoomNotExistsErr = "Error: Room not exists."
+)
 
 //--------------------------------------------game---------------------------------
 
-func NotMyTurnErr() string {
-	return "Error: Not Your Turn, please wait for the opponent."
-}
-
-func ObjNotExistsErr() string {
-	return "Error: The target chess piece does not exist. Please reselect."
-}
-
-func ObjNotOwn() string {
-	return "Error: You can't pick the opponent's pieces. Please reselect."
-}
-
-func SelectedFirstErr() string {
-	return "Error: Please select a chess piece first."
-}
-
-func UnableMoveToErr() string {
-	return "Error: Target position not reachable"
-}
+var (
+	NotMyTurnErr     = "Error: Not Your Turn, please wait for the opponent."
+	ObjNotExistsErr  = "Error: The target chess piece does not exist. Please reselect."
+	ObjNotOwnErr     = "Error: You can't pick the opponent's pieces. Please reselect."
+	SelectedFirstErr = "Error: Please select a chess piece first."
+	UnableMoveToErr  = "Error: Target position not reachable"
+)

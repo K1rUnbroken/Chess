@@ -11,31 +11,31 @@ func CheckCmdFormat(cmd cmd, parts []string) (string, bool) {
 	switch cmd {
 	case cons.QUIT:
 		if len(parts) != 1 {
-			return QuitUsageErr(), false
+			return QuitUsageErr, false
 		}
 	case cons.FINDROOM:
 		if len(parts) != 1 {
-			return FindRoomUsageErr(), false
+			return FindRoomUsageErr, false
 		}
 	case cons.ADDROOM:
 		if len(parts) != 2 {
-			return AddRoomUsageErr(), false
+			return AddRoomUsageErr, false
 		}
 	case cons.CREATEROOM:
 		if len(parts) != 1 {
-			return CreateRoomUsageErr(), false
+			return CreateRoomUsageErr, false
 		}
 	case cons.READY:
 		if len(parts) != 1 {
-			return ReadyUsageErr(), false
+			return ReadyUsageErr, false
 		}
 	case cons.SELECT:
 		if len(parts) != 3 {
-			return SelectUsageErr(), false
+			return SelectUsageErr, false
 		}
 	case cons.MOVE:
 		if len(parts) != 3 {
-			return MoveUsageErr(), false
+			return MoveUsageErr, false
 		}
 	}
 
